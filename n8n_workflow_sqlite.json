@@ -1,0 +1,36 @@
+{
+  "name": "Enhanced Telegram Signal Paper Trader",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Enhanced signal parsing with proper validation\nconst { spawn } = require('child_process');\nconst path = require('path');\n\n// Get the message from input (this would come from Telegram webhook)\nconst message = items[0].json.message || `Buy BTCUSDT\nEntry: 45,000\nTP: 47,000\nSL: 43,000`;\n\n// Call Python signal processor\ntry {\n  const pythonScript = path.join(__dirname, '..', 'signal_processor.py');\n  const python = spawn('python', ['-c', `\nimport sys\nsys.path.append('${path.dirname(pythonScript)}')\nfrom signal_processor import SignalProcessor\nimport json\n\nprocessor = SignalProcessor()\nresult = processor.process_signal('''${message.replace(/'/g, \"\\\\'\")}\n''')\nprint(json.dumps(result))\n  `]);\n  \n  let output = '';\n  let error = '';\n  \n  python.stdout.on('data', (data) => {\n    output += data.toString();\n  });\n  \n  python.stderr.on('data', (data) => {\n    error += data.toString();\n  });\n  \n  return new Promise((resolve, reject) => {\n    python.on('close', (code) => {\n      if (code !== 0) {\n        console.error('Python script error:', error);\n        reject(new Error(`Python script failed with code ${code}: ${error}`));\n        return;\n      }\n      \n      try {\n        const result = JSON.parse(output.trim());\n        \n        if (result.success) {\n          resolve([{\n            json: {\n              success: true,\n              message: result.message,\n              trade_id: result.trade_id,\n              timestamp: new Date().toISOString()\n            }\n          }]);\n        } else {\n          console.warn('Signal processing failed:', result.message, result.errors);\n          resolve([{\n            json: {\n              success: false,\n              message: result.message,\n              errors: result.errors,\n              timestamp: new Date().toISOString()\n            }\n          }]);\n        }\n      } catch (parseError) {\n        console.error('Error parsing Python output:', parseError, 'Output:', output);\n        reject(parseError);\n      }\n    });\n  });\n  \n} catch (error) {\n  console.error('Error in signal processing:', error);\n  throw error;\n}"
+      },
+      "id": "2",
+      "name": "Process Signal",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {\n          "options": {\n            "caseSensitive": true,\n            "leftValue": "",\n            "typeValidation": "strict"\n          },\n          "conditions": [\n            {\n              "id": "1",\n              "leftValue": "={{ $json.success }}",\n              "rightValue": true,\n              "operator": {\n                "type": "boolean",\n                "operation": "equals"\n              }\n            }\n          ],\n          "combinator": "and"\n        }
+      },
+      "id": "3",
+      "name": "Check Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Log successful trade\nconst result = items[0].json;\nconsole.log('✅ Trade processed successfully:', result.message);\n\n// Here you could add additional actions like:\n// - Send confirmation to Telegram\n// - Update external systems\n// - Trigger notifications\n\nreturn [{\n  json: {\n    status: 'completed',\n    message: result.message,\n    timestamp: result.timestamp\n  }\n}];"
+      },
+      "id": "4",\n      "name": "Log Success",\n      "type": "n8n-nodes-base.function",\n      "typeVersion": 1,\n      "position": [850, 250]\n    },\n    {\n      "parameters": {\n        \"functionCode\": \"// Log failed trade\\nconst result = items[0].json;\\nconsole.error('❌ Trade processing failed:', result.message);\\nconsole.error('Errors:', result.errors);\\n\\n// Here you could add error handling like:\\n// - Send error notification to Telegram\\n// - Log to external monitoring system\\n// - Alert administrators\\n\\nreturn [{\\n  json: {\\n    status: 'failed',\\n    message: result.message,\\n    errors: result.errors,\\n    timestamp: result.timestamp\\n  }\\n}];\"\n      },\n      \"id\": \"5\",\n      \"name\": \"Log Error\",\n      \"type\": \"n8n-nodes-base.function\",\n      \"typeVersion\": 1,\n      \"position\": [850, 350]\n    },\n    {\n      \"parameters\": {\n        \"functionCode\": \"// Optional: Send notification to Telegram about trade status\\nconst result = items[0].json;\\n\\n// This is a placeholder for Telegram notification\\n// You would configure this with your bot token and chat ID\\nconsole.log('📱 Notification sent for:', result.status);\\n\\nreturn items;\"\n      },\n      \"id\": \"6\",\n      \"name\": \"Send Notification\",\n      \"type\": \"n8n-nodes-base.function\",\n      \"typeVersion\": 1,\n      \"position\": [1050, 300]\n    }\n  ],\n  \"connections\": {\n    \"Start\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Process Signal\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Process Signal\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Check Success\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Check Success\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Log Success\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ],\n        [\n          {\n            \"node\": \"Log Error\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Log Success\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Send Notification\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Log Error\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Send Notification\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"active\": false,\n  \"settings\": {\n    \"executionOrder\": \"v1\"\n  },\n  \"versionId\": \"1\",\n  \"meta\": {\n    \"templateCredsSetupCompleted\": true\n  },\n  \"id\": \"enhanced_signal_trader\",\n  \"tags\": [\n    {\n      \"createdAt\": \"2025-01-30T00:00:00.000Z\",\n      \"updatedAt\": \"2025-01-30T00:00:00.000Z\",\n      \"id\": \"1\",\n      \"name\": \"paper-trading\"\n    }\n  ]\n}

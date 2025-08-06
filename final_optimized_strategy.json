@@ -1,0 +1,43 @@
+{
+  "version": "3.0",
+  "generated_at": "2025-08-03T02:01:42.995355",
+  "risk_management": {
+    "stop_loss_pct": 5.0,
+    "take_profit_strategy": {
+      "scale_out_1": {
+        "level": 5.0,
+        "size": 0.5
+      },
+      "scale_out_2": {
+        "level": 7.0,
+        "size": 0.3
+      },
+      "final_target": {
+        "level": 10.0,
+        "size": 0.2
+      }
+    },
+    "position_sizing": {
+      "base_size": 100,
+      "high_risk_multiplier": 0.5,
+      "low_risk_multiplier": 1.2
+    }
+  },
+  "symbol_management": {
+    "volatility_threshold": 0.5,
+    "min_rr_ratio": 1.5,
+    "greylist_after_losses": 4,
+    "position_reduction_after_losses": 2
+  },
+  "hedging": {
+    "enabled": true,
+    "trigger": "multiple_long_positions",
+    "hedge_ratio": 0.3,
+    "max_hedge_positions": 2
+  },
+  "expected_performance": {
+    "win_rate": 46.0,
+    "monthly_target": 15.0,
+    "max_drawdown": 20.0
+  }
+}

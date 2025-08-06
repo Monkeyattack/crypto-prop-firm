@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-08-03T00:54:19.621256",
+  "risk_management": {
+    "stop_loss_pct": 5.0,
+    "take_profit_pct": 10.0,
+    "risk_reward_ratio": 2.0,
+    "max_position_size": 100,
+    "max_daily_trades": 8
+  },
+  "entry_criteria": {
+    "min_risk_reward_ratio": 1.5,
+    "preferred_symbols": [
+      "DOTUSDT",
+      "BTCUSDT",
+      "SOLUSDT",
+      "ADAUSDT"
+    ],
+    "avoid_symbols": [
+      "MATICUSDT",
+      "ETHUSDT",
+      "UNIUSDT"
+    ]
+  },
+  "symbol_selection": {
+    "top_symbols": [
+      "DOTUSDT",
+      "BTCUSDT",
+      "SOLUSDT",
+      "ADAUSDT",
+      "ATOMUSDT"
+    ],
+    "min_trades_for_inclusion": 3,
+    "min_win_rate": 35
+  },
+  "performance_targets": {
+    "expected_win_rate": 45,
+    "expected_profit_factor": 1.2,
+    "max_drawdown_tolerance": 20
+  },
+  "improvements": {
+    "current_win_rate": 40.0,
+    "current_profit_factor": 0.89,
+    "recommendations": [
+      "Focus on higher risk/reward ratios (1.5+)",
+      "Prioritize DOTUSDT, BTCUSDT, SOLUSDT trades",
+      "Avoid MATICUSDT and ETHUSDT until better signals",
+      "Consider tighter stop losses for better RR ratios"
+    ]
+  }
+}
