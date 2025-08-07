@@ -1,0 +1,95 @@
+{
+  "pass_rate": 55.50000000000001,
+  "fail_rate": 44.5,
+  "avg_days_to_pass": 8.657657657657658,
+  "avg_final_balance": 10537.278999756389,
+  "simulations_run": 1000,
+  "detailed_results": [
+    {
+      "passed": false,
+      "failed": true,
+      "reason": "Drawdown limit",
+      "final_balance": 9413.36550625,
+      "days": 7,
+      "trades": 4
+    },
+    {
+      "passed": true,
+      "failed": false,
+      "reason": "Target reached",
+      "final_balance": 11094.449537011153,
+      "days": 9,
+      "trades": 10,
+      "win_rate": 60.0
+    },
+    {
+      "passed": false,
+      "failed": true,
+      "reason": "Drawdown limit",
+      "final_balance": 9413.36550625,
+      "days": 7,
+      "trades": 4
+    },
+    {
+      "passed": false,
+      "failed": true,
+      "reason": "Drawdown limit",
+      "final_balance": 9516.130088899847,
+      "days": 7,
+      "trades": 6
+    },
+    {
+      "passed": true,
+      "failed": false,
+      "reason": "Target reached",
+      "final_balance": 11024.692520377675,
+      "days": 9,
+      "trades": 7,
+      "win_rate": 57.14285714285714
+    },
+    {
+      "passed": false,
+      "failed": true,
+      "reason": "Drawdown limit",
+      "final_balance": 9823.752426303903,
+      "days": 9,
+      "trades": 5
+    },
+    {
+      "passed": true,
+      "failed": false,
+      "reason": "Target reached",
+      "final_balance": 11046.641323484713,
+      "days": 10,
+      "trades": 15,
+      "win_rate": 46.666666666666664
+    },
+    {
+      "passed": true,
+      "failed": false,
+      "reason": "Target reached",
+      "final_balance": 11143.426832748508,
+      "days": 7,
+      "trades": 6,
+      "win_rate": 66.66666666666666
+    },
+    {
+      "passed": true,
+      "failed": false,
+      "reason": "Target reached",
+      "final_balance": 11143.838382619077,
+      "days": 7,
+      "trades": 5,
+      "win_rate": 80.0
+    },
+    {
+      "passed": true,
+      "failed": false,
+      "reason": "Target reached",
+      "final_balance": 11197.359542832184,
+      "days": 9,
+      "trades": 11,
+      "win_rate": 54.54545454545454
+    }
+  ]
+}
