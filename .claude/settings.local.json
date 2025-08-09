@@ -11,7 +11,18 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "WebFetch(domain:breakoutprop.com)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:help.breakoutprop.com)",
+      "Bash(echo:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(pip install:*)",
+      "Bash(where python)",
+      "Bash(mkdir:*)",
+      "Bash(sqlite3:*)",
+      "Bash(dir:*)",
+      "Bash(find:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": []
   }

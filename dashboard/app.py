@@ -62,6 +62,14 @@ try:
 except ImportError:
     SIGNAL_MONITORING_AVAILABLE = False
 
+# Import prop firm dashboard
+try:
+    from prop_firm_dashboard import display_prop_firm_dashboard
+    from prop_firm_integration import show_integrated_dashboard
+    PROP_FIRM_AVAILABLE = True
+except ImportError:
+    PROP_FIRM_AVAILABLE = False
+
 # Require authentication - DISABLED for development
 # if not auth.require_auth():
 #     st.stop()
@@ -110,10 +118,10 @@ if trading_status["mode"] in ["live", "hybrid"]:
 st.sidebar.markdown("---")
 
 # Sidebar navigation
-navigation_options = ["Dashboard", "Trade Management", "Performance Analysis", "Live Trading", "Settings"]
+navigation_options = ["Dashboard", "Trade Management", "Performance Analysis", "💼 Prop Firm", "Live Trading", "Settings"]
 
 if SIGNAL_MONITORING_AVAILABLE:
-    navigation_options.insert(3, "📡 Signal Monitoring")
+    navigation_options.insert(4, "📡 Signal Monitoring")
 
 if BACKTESTING_AVAILABLE:
     navigation_options.extend(["📊 Backtesting Analysis", "🔍 Signal Analysis"])
@@ -123,6 +131,16 @@ page = st.sidebar.selectbox("Choose a page", navigation_options)
 if page == "Dashboard":
     # Overall Statistics
     st.header("Portfolio Overview")
+    
+    # Add prop firm integration if available
+    if PROP_FIRM_AVAILABLE:
+        try:
+            from prop_firm_integration import PropFirmDashboardIntegration
+            prop_integration = PropFirmDashboardIntegration()
+            prop_integration.show_prop_firm_status_banner()
+            st.markdown("---")
+        except Exception as e:
+            st.warning(f"Prop firm integration unavailable: {e}")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -182,6 +200,16 @@ if page == "Dashboard":
                 st.info("No open positions.")
         else:
             st.info("No trades available yet.")
+    
+    # Add prop firm dashboard integration
+    if PROP_FIRM_AVAILABLE:
+        st.markdown("---")
+        st.subheader("💼 Prop Firm Integration")
+        
+        try:
+            prop_integration.show_recent_prop_decisions(limit=5)
+        except Exception as e:
+            st.error(f"Error loading prop firm data: {e}")
 
 elif page == "Trade Management":
     st.header("Trade Management")
@@ -523,6 +551,27 @@ elif page == "🔍 Signal Analysis":
             st.info("The signal analysis dashboard requires access to historical signal data.")
     else:
         st.error("Signal analysis modules not available")
+
+elif page == "💼 Prop Firm":
+    if PROP_FIRM_AVAILABLE:
+        try:
+            # Show integrated prop firm dashboard
+            show_integrated_dashboard()
+        except Exception as e:
+            st.error(f"Error loading prop firm dashboard: {e}")
+            st.markdown("### Prop Firm Dashboard Unavailable")
+            st.info("The prop firm dashboard requires the PropFirmManager module and database setup.")
+            
+            # Fallback to original prop firm dashboard
+            try:
+                st.markdown("---")
+                st.markdown("**Fallback: Original Prop Firm Dashboard**")
+                display_prop_firm_dashboard()
+            except:
+                pass
+    else:
+        st.error("Prop firm modules not available")
+        st.info("Please ensure prop_firm_dashboard.py and prop_firm_manager.py are properly installed.")
 
 elif page == "Settings":
     st.header("Settings")
